@@ -114,7 +114,7 @@ function plugin(
       return task__extractReflections(false);
     },
     async contentLoaded({ content, actions }) {
-      //@ts-ignore
+      // @ts-expect-error - JS file with incomplete type information
       const reflectionsIndex = Object.fromEntries(
         content.children.map((c) => [c.id, c])
       );

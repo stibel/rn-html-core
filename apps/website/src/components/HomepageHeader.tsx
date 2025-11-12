@@ -3,9 +3,7 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import classes from './HomepageHeader.module.scss';
 import Screenshot from './Screenshot';
-//@ts-ignore
 import showcaseImgWebp from '@site/static/img/discover-screenshot.webp';
-//@ts-ignore
 import showcaseImgJpeg from '@site/static/img/discover-screenshot.jpeg';
 
 function Feature({ children }) {

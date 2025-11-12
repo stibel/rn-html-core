@@ -18,7 +18,7 @@ const TEmptyCtor = function TEmpty(
   this.initialize(init);
 } as Function as GenericTNodeCtor<TEmptyInit, TEmptyImpl>;
 
-//@ts-ignore
+// @ts-expect-error - Prototypal inheritance pattern incompatible with TS strict typing
 TEmptyCtor.prototype = new TNodeCtor('empty', 'TEmpty');
 
 TEmptyCtor.prototype.matchContentModel = function matchContentModel(

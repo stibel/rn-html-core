@@ -203,7 +203,6 @@ export class TRenderEngine {
         head = child;
       }
     }
-    //@ts-ignore
     if (!body && !head) {
       body = new Element('body', {});
       body.childNodes = document.children;
@@ -229,7 +228,7 @@ export class TRenderEngine {
     }
     for (const child of document.children) {
       if (isDomElement(child) && child.tagName === 'html') {
-        // @ts-ignore TODO: fix this
+        // @ts-expect-error - Type narrowing from Document to Element
         document = child;
         break;
       }
@@ -238,7 +237,7 @@ export class TRenderEngine {
   }
 
   buildTTreeFromDoc(document: Document | Element): TDocument {
-    // @ts-ignore TODO: fix this
+    // @ts-expect-error - translateDocument type signature needs refinement
     const tdoc = translateDocument(document, this.dataFlowParams);
     const hoistedTDoc = this.hoistingEnabled ? hoist(tdoc) : tdoc;
     const collapsedTDoc = this.whitespaceCollapsingEnabled

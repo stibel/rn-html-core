@@ -4,7 +4,7 @@ global.__DEV__ = true;
 //@ts-expect-error performance does not exists at top-level
 global.performance = {
   now() {
-    // @ts-ignore TODO: fix this
+    // @ts-expect-error - hrtime returns [number, number] but type inference fails
     const [seconds, nano] = process.hrtime();
     return seconds * 1000000 + nano / 1000;
   }

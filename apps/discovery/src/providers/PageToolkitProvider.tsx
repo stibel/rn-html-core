@@ -34,7 +34,7 @@ import MaxWidthContainerAtom from '../components/MaxWidthContainerAtom';
 
 const genericOnLinkPress = (uri: string) => Linking.openURL(uri);
 
-//@ts-ignore
+// @ts-expect-error - Function overload implementation signature mismatch
 function useOnLinkPress(uri: string): () => void;
 function useOnLinkPress(): (uri: string) => void;
 function useOnLinkPress(uri?: string) {
@@ -124,7 +124,7 @@ const SourceDisplay: UIToolkitConfig['SourceDisplay'] = ({
 const RefDoc: UIToolkitConfig['RefDoc'] = ({ target, children, fragment }) => {
   const navigation = useNavigation();
   const onPress = useCallback(() => {
-    // @ts-ignore TODO: fix this
+    // @ts-expect-error - Navigation route type not fully typed
     navigation.navigate(`${target.group}-${target.id}`, { fragment });
   }, [navigation, target.group, target.id, fragment]);
   return (
@@ -204,7 +204,7 @@ const toolkitConfig: UIToolkitConfig = {
   DList: ({ children }) => (
     <BoxNucleon padding={2}>
       {Children.map(children as ReactElement[], (c: ReactElement, i) =>
-        // @ts-ignore TODO: fix this
+        // @ts-expect-error - Adding dynamic prop to cloned element
         React.cloneElement(c, { ...c.props, index: Math.floor(i / 2) })
       )}
     </BoxNucleon>

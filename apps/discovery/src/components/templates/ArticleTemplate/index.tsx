@@ -68,7 +68,7 @@ function SiblingPageTide({
       title={target.title}
       align={direction === 'prev' ? 'left' : 'right'}
       onPress={useCallback(
-        // @ts-ignore TODO: fix this
+        // @ts-expect-error - Navigation route type not fully typed
         () => navigation.navigate(`${target.group}-${target.id}`),
         [navigation, target]
       )}

@@ -65,7 +65,7 @@ const roleDefs: Record<
     fontSize: BASE_FONT_SIZE * 0.9,
     fontFamily: FONT_BODY_BOLD
   },
-  //@ts-ignore
+  // @ts-expect-error - Custom role not in type definition
   bodyDListHeader: {
     fontSize: BASE_FONT_SIZE * 1.15,
     lineHeight: BASE_FONT_SIZE * 1.15
@@ -86,11 +86,11 @@ const roleDefs: Record<
   uiMono: { fontSize: BASE_FONT_SIZE * 0.9, fontFamily: FONT_MONO },
   uiHyperlink: { fontSize: 5, fontFamily: FONT_MONO },
   footer: { fontSize: BASE_FONT_SIZE * 0.8, fontFamily: FONT_MONO },
-  //@ts-ignore
+  // @ts-expect-error - Custom role not in type definition
   html: { fontSize: BASE_FONT_SIZE * 0.9 },
-  //@ts-ignore
+  // @ts-expect-error - Custom role not in type definition
   bodyInlineCode: { fontFamily: FONT_MONO },
-  //@ts-ignore
+  // @ts-expect-error - Custom role not in type definition
   bodyAPIRef: { fontFamily: FONT_MONO },
   sectionOutline: {
     fontSize: BASE_FONT_SIZE * 0.8,

@@ -88,7 +88,6 @@ const MDXRenderer = Reconciler<
   // eslint-disable-next-line no-undef
   queueMicrotask: queueMicrotask,
 
-  //@ts-ignore
   now: () => {},
 
   // Setting to false leads to crash...

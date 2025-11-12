@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-// @ts-ignore
 import version from '../../../../version';
 import TextRoleNucleon from '../../nucleons/TextRoleNucleon';
 import { useColorRoles } from '../../../theme/colorSystem';

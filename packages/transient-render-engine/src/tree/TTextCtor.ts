@@ -48,7 +48,7 @@ const TTextCtor = function TText(this: Mutable<TTextImpl>, init: TTextInit) {
   this.isVoid = this.elementModel ? this.elementModel.isVoid : false;
 } as Function as GenericTNodeCtor<TTextInit, TTextImpl>;
 
-//@ts-ignore
+// @ts-expect-error - Prototypal inheritance pattern incompatible with TS strict typing
 TTextCtor.prototype = new TNodeCtor('text', 'TText', {
   data: {
     get(this: TTextImpl) {

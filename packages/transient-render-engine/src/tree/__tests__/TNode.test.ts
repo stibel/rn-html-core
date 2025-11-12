@@ -11,11 +11,11 @@ const TTest = function (this: Mutable<TNodeImpl>, init: TNodeInit) {
   this.initialize(init);
 };
 
-//@ts-ignore
+// @ts-expect-error - Prototypal inheritance pattern incompatible with TS strict typing
 TTest.prototype = new TNodeCtor('block', 'TTest');
 
 function newTNode(init?: Partial<TNodeInit>) {
-  //@ts-ignore
+  // @ts-expect-error - Constructor function used as class with new keyword
   return new TTest({ ...defaultInit, ...init }) as TNodeImpl;
 }
 

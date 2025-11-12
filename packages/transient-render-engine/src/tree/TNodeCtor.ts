@@ -220,7 +220,7 @@ const prototype: Omit<TNodeImpl, 'displayName' | 'type'> = {
   },
 
   bindChildren(children, shouldUpdateNodeIndexes = false) {
-    //@ts-ignore
+    // @ts-expect-error - Assigning to readonly property, requires architectural change
     this.children = children;
     if (shouldUpdateNodeIndexes) {
       children.forEach(updateNodeIndexes);
@@ -260,7 +260,7 @@ const prototype: Omit<TNodeImpl, 'displayName' | 'type'> = {
       const firstChild = this.children[0];
       firstChild.trimLeft();
       if (firstChild.isEmpty()) {
-        //@ts-ignore
+        // @ts-expect-error - Mutating readonly array, requires architectural change
         this.children.splice(0, 1);
       }
       this.__trimmedLeft = true;
@@ -272,7 +272,7 @@ const prototype: Omit<TNodeImpl, 'displayName' | 'type'> = {
       const lastChild = this.children[this.children.length - 1];
       lastChild.trimRight();
       if (lastChild.isEmpty()) {
-        //@ts-ignore
+        // @ts-expect-error - Mutating readonly array, requires architectural change
         this.children.splice(-1, 1);
       }
       this.__trimmedRight = true;
@@ -286,7 +286,7 @@ const prototype: Omit<TNodeImpl, 'displayName' | 'type'> = {
   spliceChildren(indexesToSplice) {
     let offset = 0;
     for (const i of indexesToSplice) {
-      //@ts-ignore
+      // @ts-expect-error - Mutating readonly array, requires architectural change
       this.children.splice(i - offset, 1);
       offset += 1;
     }

@@ -5,13 +5,12 @@ import mergeRight from 'ramda/src/mergeRight';
 import { RenderHTMLProps, RenderHTMLAmbiantSharedProps } from '../shared-types';
 import defaultSharedProps from '../context/defaultSharedProps';
 
-const selectSharedProps: (
+const selectSharedProps = (
   props: Partial<RenderHTMLProps>
-) => RenderHTMLAmbiantSharedProps = pipe(
-  // @ts-ignore TODO fix this
-  pick(Object.keys(defaultSharedProps)),
-  pickBy((val) => val != null),
-  mergeRight(defaultSharedProps) as any
-);
+): RenderHTMLAmbiantSharedProps => {
+  const picked = pick(Object.keys(defaultSharedProps) as Array<keyof RenderHTMLAmbiantSharedProps>, props);
+  const filtered = pickBy((val) => val != null, picked) as Partial<RenderHTMLAmbiantSharedProps>;
+  return mergeRight(defaultSharedProps, filtered as any) as RenderHTMLAmbiantSharedProps;
+};
 
 export default selectSharedProps;

@@ -13,7 +13,7 @@ const markersPrototype: Markers = {
   toString() {
     let print = 'Markers {\n';
     for (const key in this) {
-      //@ts-ignore
+      // @ts-expect-error - Iterating over keys requires indexing with string
       const val = this[key];
       if (typeof val !== 'function') {
         print += `  ${key}: ${JSON.stringify(val)}\n`;

@@ -102,7 +102,7 @@ function mapGroup({
     <Drawer.Screen
       component={component}
       options={{
-        //@ts-ignore
+        // @ts-expect-error - Custom navigation options not in type definition
         group,
         groupLabel,
         header: header || groupHeader,

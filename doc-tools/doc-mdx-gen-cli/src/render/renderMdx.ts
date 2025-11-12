@@ -17,10 +17,9 @@ async function renderMdx(
     undefined as any
   ) as MDXDocument;
 
-  //@ts-ignore
+  // @ts-expect-error - React internal APIs not fully typed
   const node = MDXRenderer.createContainer(container, undefined, false);
 
-  //@ts-ignore
   MDXRenderer.updateContainer(element, node, null);
 
   try {

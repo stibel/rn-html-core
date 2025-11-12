@@ -88,7 +88,7 @@ function declareProps(
   }
   for (const [key, value] of props) {
     if (!(key in fnSrcMap)) {
-      //@ts-ignore
+      // @ts-expect-error - Dynamic value serialization
       output += `const ${key} = ${serializeValue(key, value, config)};\n\n`;
     }
   }

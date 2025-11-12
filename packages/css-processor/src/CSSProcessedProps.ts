@@ -86,7 +86,7 @@ export class CSSProcessedProps
   private newCompatCategory<
     T extends CSSPropertyCompatCategory
   >(): CSSProcessedProps[T] {
-    // @ts-ignore TODO: fix this
+    // @ts-expect-error - Generic type indexing complexity
     return {
       block: {
         retain: emptyProps,
@@ -109,7 +109,7 @@ export class CSSProcessedProps
       if (!isNotEmpty(target)) {
         this[compatCategory][displayCategory][propagationCategory] = {};
       }
-      //@ts-ignore
+      // @ts-expect-error - Complex nested generic type indexing
       this[compatCategory][displayCategory][propagationCategory][propertyName] =
         propertyValue;
     }

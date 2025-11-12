@@ -8,7 +8,7 @@ const TBlockCtor = function TBlock(this: Mutable<TBlockImpl>, init: TNodeInit) {
   this.initialize(init);
 } as Function as GenericTNodeCtor<TNodeInit, TBlockImpl>;
 
-//@ts-ignore
+// @ts-expect-error - Prototypal inheritance pattern incompatible with TS strict typing
 TBlockCtor.prototype = new TNodeCtor('block', 'TBlock');
 
 TBlockCtor.prototype.matchContentModel = function matchContentModel(

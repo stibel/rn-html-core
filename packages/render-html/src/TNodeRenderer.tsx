@@ -117,7 +117,7 @@ const TNodeRenderer = memo(function MemoizedTNodeRenderer(
       ? renderBlockContent
       : renderTextualContent;
   return Renderer === null
-    // @ts-ignore TODO: fix this
+    // @ts-expect-error - Type union complexity between renderFn signatures
     ? renderFn(assembledProps)
     : React.createElement(Renderer as any, assembledProps);
 });

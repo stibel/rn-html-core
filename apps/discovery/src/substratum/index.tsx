@@ -51,7 +51,7 @@ export default function createColorSystem<CPD>() {
     return useContext(colorPrimitivesContext);
   }
   const ColorPrimitivesProvider = colorPrimitivesContext.Provider;
-  //@ts-ignore
+  // @ts-expect-error - displayName should be string, not component
   ColorPrimitivesProvider.displayName = ColorPrimitivesProvider;
   function createColorRoles<CR>() {
     const colorRolesContext = createContext<ColorRolesDefinitionValidator<CR>>(

@@ -83,7 +83,7 @@ export default class DomHandler extends OriginalDomHandler {
         this.ignoredTagsCount++;
       }
     } else {
-      // @ts-ignore TODO: fix this
+      // @ts-expect-error - Parent class type mismatch with domhandler Node types
       super.addNode(node);
       if (isDomText(node)) {
         this.visitors.onText?.(node);

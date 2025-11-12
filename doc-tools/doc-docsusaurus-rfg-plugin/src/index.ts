@@ -45,7 +45,7 @@ function generateFaviconAsync(request: any, dest: string) {
 
 // TODO also clear favicon folder when cleaning.
 
-//@ts-ignore
+// @ts-expect-error - Docusaurus plugin type mismatch
 const plugin: PluginModule = function plugin(
   { baseUrl, generatedFilesDir }: LoadContext,
   {

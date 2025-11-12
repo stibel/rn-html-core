@@ -15,7 +15,7 @@ const TPhrasingCtor = function TPhrasing(
   this.initialize(init);
 } as Function as GenericTNodeCtor<TNodeInit, TPhrasingImpl>;
 
-//@ts-ignore
+// @ts-expect-error - Prototypal inheritance pattern incompatible with TS strict typing
 TPhrasingCtor.prototype = new TNodeCtor('phrasing', 'TPhrasing');
 
 TPhrasingCtor.prototype.matchContentModel = function matchContentModel(

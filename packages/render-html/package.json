@@ -44,7 +44,6 @@
     "@native-html/transient-render-engine": "workspace:*",
     "@types/ramda": "^0.31.1",
     "@types/urijs": "^1.19.25",
-    "prop-types": "^15.8.1",
     "ramda": "^0.32.0",
     "stringify-entities": "^4.0.4",
     "urijs": "^1.19.11"

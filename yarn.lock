@@ -23702,7 +23702,6 @@ __metadata:
     htmlparser2: "npm:^10.0.0"
     jest: "npm:^29.7.0"
     prettier: "npm:^3.6.2"
-    prop-types: "npm:^15.8.1"
     ramda: "npm:^0.32.0"
     react: "npm:19.1.0"
     react-native: "npm:0.81.5"

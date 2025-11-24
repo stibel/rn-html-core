@@ -6,23 +6,20 @@
  */
 import React, { useState, useCallback, useEffect, useRef, memo } from 'react';
 import clsx from 'clsx';
-import { useThemeConfig, isSamePath } from '@docusaurus/theme-common';
-import useUserPreferencesContext from '@theme/hooks/useUserPreferencesContext';
-import useLockBodyScroll from '@theme/hooks/useLockBodyScroll';
-import useWindowSize, { windowSizes } from '@theme/hooks/useWindowSize';
-import useScrollPosition from '@theme/hooks/useScrollPosition';
+import { useThemeConfig, useWindowSize } from '@docusaurus/theme-common';
 import Link from '@docusaurus/Link';
 import isInternalUrl from '@docusaurus/isInternalUrl';
 import Logo from '@theme/Logo';
-import IconArrow from '@theme/IconArrow';
-import IconMenu from '@theme/IconMenu';
+import IconArrow from '@theme/Icon/Arrow';
+import IconMenu from '@theme/Icon/Menu';
 import { translate } from '@docusaurus/Translate';
 import styles from './styles.module.css';
 const MOBILE_TOGGLE_SIZE = 24;
 
+const normalizePath = (p) => (p || '').replace(/\/$/, '');
 const isActiveSidebarItem = (item, activePath) => {
   if (item.type === 'link') {
-    return isSamePath(item.href, activePath);
+    return normalizePath(item.href) === normalizePath(activePath);
   }
 
   if (item.type === 'category') {
@@ -119,24 +116,25 @@ function DocSidebarItemLink({
 }
 
 function useShowAnnouncementBar() {
-  const { isAnnouncementBarClosed } = useUserPreferencesContext();
-  const [showAnnouncementBar, setShowAnnouncementBar] = useState(
-    !isAnnouncementBarClosed
-  );
-  useScrollPosition(({ scrollY }) => {
-    if (!isAnnouncementBarClosed) {
-      setShowAnnouncementBar(scrollY === 0);
-    }
-  });
-  return showAnnouncementBar;
+  return false;
 }
 
 function useResponsiveSidebar() {
   const [showResponsiveSidebar, setShowResponsiveSidebar] = useState(false);
-  useLockBodyScroll(showResponsiveSidebar);
+  // Local replacement for removed useLockBodyScroll in Docusaurus v3
+  useEffect(() => {
+    if (showResponsiveSidebar) {
+      const { overflow } = document.body.style;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = overflow || '';
+      };
+    }
+    return undefined;
+  }, [showResponsiveSidebar]);
   const windowSize = useWindowSize();
   useEffect(() => {
-    if (windowSize === windowSizes.desktop) {
+    if (windowSize === 'desktop') {
       setShowResponsiveSidebar(false);
     }
   }, [windowSize]);
@@ -231,7 +229,6 @@ function DocSidebar({
     navbar: { hideOnScroll },
     hideableSidebar
   } = useThemeConfig();
-  const { isAnnouncementBarClosed } = useUserPreferencesContext();
   const {
     showResponsiveSidebar,
     closeResponsiveSidebar,
@@ -252,8 +249,7 @@ function DocSidebar({
           styles.menu,
           {
             'menu--show': showResponsiveSidebar,
-            [styles.menuWithAnnouncementBar]:
-              !isAnnouncementBarClosed && showAnnouncementBar
+            [styles.menuWithAnnouncementBar]: false
           }
         )}>
         <ResponsiveSidebarButton

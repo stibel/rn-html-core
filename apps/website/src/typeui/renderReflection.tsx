@@ -1,6 +1,6 @@
 import React from 'react';
-import { ReflectionKind } from 'typedoc/dist/lib/models/reflections/abstract';
 import type { JSONOutput } from 'typedoc';
+import { ReflectionKind } from 'typedoc';
 import {
   TokenPunctuation,
   TokenAttrName,
@@ -93,10 +93,10 @@ function renderPropsAndMethods(
   params: Params
 ) {
   const props = reflection.children?.filter(
-    (c) => c.kind === ReflectionKind.Property
+    (c) => c.kind === ReflectionKind.Property || getKindString(c) === 'Property'
   );
   const methods = reflection.children?.filter(
-    (c) => c.kind === ReflectionKind.Method
+    (c) => c.kind === ReflectionKind.Method || getKindString(c) === 'Method'
   );
   return (
     <>
@@ -126,12 +126,93 @@ function renderFunction(
   );
 }
 
+function getKindString(
+  reflection: JSONOutput.DeclarationReflection
+): string | undefined {
+  if ('kindString' in reflection) {
+    const obj = reflection as unknown as { kindString?: string };
+    return obj.kindString;
+  }
+  return undefined;
+}
+
+function getDefaultValue(
+  reflection: JSONOutput.DeclarationReflection
+): unknown {
+  if ('defaultValue' in reflection) {
+    const obj = reflection as unknown as { defaultValue?: unknown };
+    return obj.defaultValue;
+  }
+  return undefined;
+}
+
+function getTypeParameter(
+  reflection: JSONOutput.DeclarationReflection
+): JSONOutput.TypeParameterReflection[] | undefined {
+  if ('typeParameter' in reflection) {
+    const obj = reflection as unknown as {
+      typeParameter?: JSONOutput.TypeParameterReflection[];
+    };
+    return obj.typeParameter;
+  }
+  return undefined;
+}
+
+// Helper function to get ReflectionKind from reflection, with fallback to kindString
+function getReflectionKind(
+  reflection: JSONOutput.DeclarationReflection
+): ReflectionKind | null {
+  // Use kind if available (preferred)
+  if (reflection.kind !== undefined) {
+    return reflection.kind;
+  }
+
+  // Fallback: map kindString to ReflectionKind (for TypeDoc 0.28 compatibility)
+  const kindStringMap: Record<string, ReflectionKind> = {
+    Function: ReflectionKind.Function,
+    'Type alias': ReflectionKind.TypeAlias,
+    Enum: ReflectionKind.Enum,
+    Class: ReflectionKind.Class,
+    Interface: ReflectionKind.Interface,
+    Parameter: ReflectionKind.Parameter,
+    Property: ReflectionKind.Property,
+    'Type literal': ReflectionKind.TypeLiteral,
+    Method: ReflectionKind.Method,
+    Variable: ReflectionKind.Variable,
+    'Enum member': ReflectionKind.EnumMember,
+    'Call signature': ReflectionKind.CallSignature
+  };
+
+  const kindString = getKindString(reflection);
+  if (kindString) {
+    return kindStringMap[kindString] || null;
+  }
+
+  // Infer from reflection properties (for TypeDoc 0.28 compatibility)
+  if (reflection.signatures) {
+    return ReflectionKind.Function;
+  }
+  if (getDefaultValue(reflection) !== undefined) {
+    return ReflectionKind.EnumMember;
+  }
+  if (reflection.type) {
+    return ReflectionKind.Property;
+  }
+  return ReflectionKind.TypeAlias;
+}
+
 export default function renderReflection(
   reflection: JSONOutput.DeclarationReflection,
   params: Params
 ) {
+  if (!reflection) {
+    console.warn('renderReflection called with undefined reflection');
+    return <TokenKeyword>any</TokenKeyword>;
+  }
   let nextParams: Params = params;
-  switch (reflection.kind) {
+  const kind = getReflectionKind(reflection);
+
+  switch (kind) {
     case ReflectionKind.Function:
       return renderFunction(
         reflection,
@@ -144,11 +225,15 @@ export default function renderReflection(
           <code> </code>
           <TokenPlain>{reflection.name}</TokenPlain>
           {renderTypeParameters(
-            reflection.typeParameter,
+            getTypeParameter(reflection) || reflection.typeParameters || [],
             params.withTypeParamsLinks()
           )}
           <TokenPunctuation>{' = '}</TokenPunctuation>
-          {renderType(reflection.type, params)}
+          {reflection.type ? (
+            renderType(reflection.type, params)
+          ) : (
+            <TokenKeyword>any</TokenKeyword>
+          )}
         </>
       );
     case ReflectionKind.Enum:
@@ -174,7 +259,7 @@ export default function renderReflection(
           <code> </code>
           <TokenPlain>{reflection.name}</TokenPlain>
           {renderTypeParameters(
-            reflection.typeParameter,
+            getTypeParameter(reflection) || reflection.typeParameters || [],
             params.withTypeParamsLinks()
           )}
           <code> </code>
@@ -195,7 +280,7 @@ export default function renderReflection(
           <code> </code>
           <TokenPlain>{reflection.name}</TokenPlain>
           {renderTypeParameters(
-            reflection.typeParameter,
+            getTypeParameter(reflection) || reflection.typeParameters || [],
             params.withTypeParamsLinks()
           )}
           <code> </code>
@@ -216,7 +301,11 @@ export default function renderReflection(
     case ReflectionKind.Parameter:
       return renderAttribute(
         reflection.name,
-        renderType(reflection.type, params),
+        reflection.type ? (
+          renderType(reflection.type, params)
+        ) : (
+          <TokenKeyword>any</TokenKeyword>
+        ),
         reflection.flags,
         params
       );
@@ -224,7 +313,11 @@ export default function renderReflection(
       nextParams = params.withoutMemberLinks();
       return renderAttribute(
         reflection.name,
-        renderType(reflection.type, nextParams),
+        reflection.type ? (
+          renderType(reflection.type, nextParams)
+        ) : (
+          <TokenKeyword>any</TokenKeyword>
+        ),
         reflection.flags,
         params
       );
@@ -236,9 +329,9 @@ export default function renderReflection(
       if (reflection.signatures) {
         return renderArrowSignatures(reflection.signatures, params);
       }
-      let ret: any = null;
+      let ret: React.ReactElement | null = null;
       for (const group of reflection.groups!) {
-        if (group.kind === ReflectionKind.Property) {
+        if (group.title === 'Properties') {
           const props = reflection.children.filter((c) =>
             group.children.includes(c.id)
           );
@@ -265,16 +358,37 @@ export default function renderReflection(
           params
         );
       });
-    case ReflectionKind.Function:
-      return renderArrowSignatures(
-        (reflection as JSONOutput.DeclarationReflection).signatures,
-        params
-      );
     case ReflectionKind.CallSignature:
+      // CallSignature is typically a SignatureReflection, not DeclarationReflection
+      // If reflection has signatures, use the first one
+      if (reflection.signatures && reflection.signatures.length > 0) {
+        return (
+          <>
+            {renderConst(reflection.name)}
+            {renderArrowSignature(reflection.signatures[0], params)}
+          </>
+        );
+      }
+      // Fallback: check if reflection has SignatureReflection properties
+      if (
+        'type' in reflection &&
+        (reflection as unknown as JSONOutput.SignatureReflection).type
+      ) {
+        return (
+          <>
+            {renderConst(reflection.name)}
+            {renderArrowSignature(
+              reflection as unknown as JSONOutput.SignatureReflection,
+              params
+            )}
+          </>
+        );
+      }
+      // If no valid signature found, return fallback
       return (
         <>
           {renderConst(reflection.name)}
-          {renderArrowSignature(reflection, params)}
+          <TokenKeyword>any</TokenKeyword>
         </>
       );
     case ReflectionKind.Variable:
@@ -285,7 +399,11 @@ export default function renderReflection(
       return (
         <>
           {renderConst(reflection.name)}
-          {renderType(reflection.type, params)}
+          {reflection.type ? (
+            renderType(reflection.type, params)
+          ) : (
+            <TokenKeyword>any</TokenKeyword>
+          )}
         </>
       );
     case ReflectionKind.EnumMember:
@@ -295,13 +413,20 @@ export default function renderReflection(
         params
       );
     default:
-      console.warn(
-        'Unhandled Declaration Reflection of kind',
-        reflection.kindString,
+      console.warn('Unhandled Declaration Reflection, falling back to any', {
+        kind: kind,
+        kindString: getKindString(reflection),
         reflection
-      );
-      throw new Error(
-        `Unhandled Declaration Reflection of kind ${reflection.kindString}`
-      );
+      });
+      // Try to render as a property if it has a type
+      if (reflection.type) {
+        return renderAttribute(
+          reflection.name || '',
+          renderType(reflection.type, params),
+          reflection.flags || {},
+          params
+        );
+      }
+      return <TokenKeyword>any</TokenKeyword>;
   }
 }

@@ -1,5 +1,3 @@
-import URI from 'urijs';
-
 /**
  * This function normalize relative and protocol-relative URLs to absolute
  * URLs as per {@link https://tools.ietf.org/html/rfc1808 | RFC1808}.
@@ -12,8 +10,14 @@ export default function normalizeResourceLocator(
   baseUrl?: string
 ) {
   try {
-    return baseUrl ? URI(url).absoluteTo(URI(baseUrl)).href() : URI(url).href();
+    if (!baseUrl) {
+      // Try to parse as absolute URL
+      return new URL(url).href;
+    }
+    // Resolve relative URL against base URL
+    return new URL(url, baseUrl).href;
   } catch {
+    // If URL parsing fails, return original URL
     return url;
   }
 }

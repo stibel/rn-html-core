@@ -53,7 +53,11 @@ module.exports = {
   url: WEBSITE_ROOT,
   baseUrl: WEBSITE_BASE,
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'throw'
+    }
+  },
   // TODO remove when this issue is resolved
   // https://github.com/facebook/docusaurus/issues/4923
   // Also remove the swizzled LayoutHead
@@ -63,20 +67,16 @@ module.exports = {
   plugins: plugins,
   trailingSlash: false,
   themeConfig: {
-    algolia: {
-      apiKey: '4f9905bd301a15034820905263f47dda',
-      indexName: 'meliorence',
-      // Should be set to true for versioned sites
-      contextualSearch: false,
-      // Optional: Algolia search parameters
-      searchParameters: {}
-    },
-    gtag: {
-      trackingID: 'G-CYR1XDV25N',
-      anonymizeIP: true
-    },
+    // TODO: if we want to re-enable Algolia, we need to get a new key and app id.
+    // algolia: {
+    //   appId: 'YOUR_APP_ID',
+    //   apiKey: '4f9905bd301a15034820905263f47dda',
+    //   indexName: 'meliorence',
+    //   contextualSearch: false,
+    //   searchParameters: {}
+    // },
     prism: {
-      theme: require('prism-react-renderer/themes/dracula')
+      theme: require('prism-react-renderer').themes.dracula
     },
     colorMode: {
       defaultMode: 'dark',
@@ -90,29 +90,30 @@ module.exports = {
       },
       items: [
         {
-          type: 'doc',
-          docId: 'intro',
+          to: '/docs/intro',
           position: 'left',
-          label: 'Docs'
+          label: 'Docs',
+          exact: true
         },
         {
           to: 'api/',
-          activeBasePath: 'api',
           position: 'left',
-          label: 'API'
+          label: 'API',
+          exact: true
         },
         {
           to: 'api/renderhtmlprops',
           position: 'left',
-          label: 'Props'
+          label: 'Props',
+          exact: true
         },
         {
-          type: 'doc',
-          docId: 'faq',
+          to: '/docs/faq',
           label: 'FAQ',
-          activeSidebarClassName: '__fun'
+          position: 'left',
+          exact: true
         },
-        { to: 'blog', label: 'Blog', position: 'left' },
+        { to: 'blog', label: 'Blog', position: 'left', exact: true },
         {
           to: 'https://github.com/sponsors/jsamr',
           label: 'Sponsorship',
@@ -263,6 +264,10 @@ module.exports = {
         },
         theme: {
           customCss: require.resolve('./src/css/custom.scss')
+        },
+        gtag: {
+          trackingID: 'G-CYR1XDV25N',
+          anonymizeIP: true
         }
       }
     ]
